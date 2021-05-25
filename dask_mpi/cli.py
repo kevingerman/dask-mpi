@@ -54,6 +54,13 @@ from .core import MPIRunner
     default=":8787",
     help="Address for visual diagnostics dashboard",
 )
+@click.option(
+    "--worker-class",
+    type=str,
+    default="dask.distributed.Worker",
+    help="Dask worker implementation, requires no-nanny",
+)
+
 def main(
     scheduler_file,
     interface,
@@ -65,6 +72,7 @@ def main(
     nanny,
     scheduler_port,
     protocol,
+    worker_class
 ):
     scheduler_options = {
         "scheduler_file": scheduler_file,
@@ -80,7 +88,7 @@ def main(
         "memory_limit": memory_limit,
         "local_directory": local_directory,
     }
-    worker_class = "dask.distributed.Nanny" if nanny else "dask.distributed.Worker"
+    worker_class = "dask.distributed.Nanny" if nanny else worker_class
     MPIRunner(
         scheduler=scheduler,
         scheduler_options=scheduler_options,
